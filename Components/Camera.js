@@ -1,14 +1,18 @@
 import React from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import { Camera, Permissions } from 'expo';
+import MapScreen from './Map';
 
-export default class CameraExample extends React.Component {
+export default class CameraC extends React.Component {
   camera = null;
   state = {
     hasCameraPermission: null,
-    type: Camera.Constants.Type.back
+    type: Camera.Constants.Type.back,
+    ready:false
   };
-
+  static navigationOptions = {
+    title: "Scan"
+};
   async componentDidMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({ hasCameraPermission: status === 'granted' });
@@ -19,7 +23,7 @@ export default class CameraExample extends React.Component {
     if (this.camera) {
       photo = await this.camera.takePictureAsync();
       // Http Request
-
+      this.setState({ready:true});
       this.props.getImage(photo);
     }
   }
@@ -30,11 +34,14 @@ export default class CameraExample extends React.Component {
     if (hasCameraPermission === null) {
       return <View />;
     } else if (hasCameraPermission === false) {
-      return <Text>No access to camera</Text>;
-    } else {
+      return <Text>No access to camera</Text>;}
+    // } else if(this.state.ready){
+    //    return(<MapScreen></MapScreen>
+    //     );    } 
+    else {
       return (
 
-        < View style={{ flex: 1 }
+        <View style={{ flex: 1 }
         }>
           <Camera style={{ flex: 1 }} type={this.state.type} ref={cam => { this.camera = cam; }}>
             <View
@@ -68,12 +75,53 @@ export default class CameraExample extends React.Component {
                 onPress={this.props.enableCamera}
               >
                 <Text
-                  style={{ fontSize: 18, marginBottom: 10, marginLeft: 80, color: 'white' }}
+                  style={{ fontSize: 14, marginBottom: 10, marginLeft: 80, color: 'white' }}
                 >Back</Text>
               </TouchableOpacity>
 
+            </View>
+          </Camera>
+        </View >
+      )
+    }
+  }
+}
 
-              <TouchableOpacity
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              {/* <TouchableOpacity
                 style={{
                   flex: 0.1,
                   alignSelf: 'flex-start',
@@ -94,12 +142,4 @@ export default class CameraExample extends React.Component {
                   {' '}
                   Flip{' '}
                 </Text>
-              </TouchableOpacity>
-            </View>
-          </Camera>
-        </View >
-      )
-    }
-  }
-}
-
+              </TouchableOpacity> */}

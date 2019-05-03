@@ -1,64 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Button, Image } from 'react-native';
+import {Text,View} from 'react-native';
+import {StackNavigator} from 'react-navigation'
+import MapScreen from './Components/Map';
+import Home from './Components/Home';
+import CameraC from './Components/Camera';
 
-import Camera from './Components/Camera';
 
+const Navigation = StackNavigator({
+  Home :{screen:Home},
+  Map :{screen:MapScreen},
+  Camera:{screen:CameraC}
 
-export default class App extends React.Component {
-  state = {
-    enableCamera: false,
-    photo: null
-  };
-
-  getImage = (image) => {
-    this.setState({
-      photo: image,
-      enableCamera: false
-    })
-  }
-
-  enableCamera = () => {
-    this.setState(() => {
-      let { enableCamera } = this.state
-      return {
-        enableCamera: !enableCamera
-      }
-    });
-  };
-
-  render() {
-    const { enableCamera, photo } = this.state;
-    return (
-      <View style={enableCamera ? {
-        flex: 1,
-        backgroundColor: 'transparent',
-        flexDirection: 'row'
-      } : styles.container}>
-        {enableCamera ?
-          <Camera
-            getImage={this.getImage}
-            enableCamera={this.enableCamera}
-          />
-          : <Button title="Enable Camera" onPress={this.enableCamera} />
-        }
-        {
-          enableCamera ? null : photo
-            ?
-            <Image
-              style={{ width: 100, height: 100, marginTop: 20 }}
-              source={photo} />
-            : null
-        }
-      </View>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
 });
+
+export default Navigation ;
