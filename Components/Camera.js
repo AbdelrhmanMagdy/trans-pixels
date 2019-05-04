@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text, View, TouchableOpacity , ToastAndroid, ActivityIndicator} from 'react-native';
+import { Text, View, TouchableOpacity , ToastAndroid, ActivityIndicator, StyleSheet} from 'react-native';
 import { Camera, Permissions } from 'expo';
 import MapScreen from './Map';
 
-export default class CameraC extends React.Component {
+class CameraC extends React.Component {
 
   camera = null;
   state = {
@@ -23,7 +23,7 @@ export default class CameraC extends React.Component {
 
 
   getMyLocation(img){
-    const url = 'http://192.168.1.30:5000/mark'
+    const url = 'http://192.168.1.8:5000/mark'
     const data = new FormData();
     const imguri = img.uri
     const imgName = imguri.split('/').pop()
@@ -56,14 +56,14 @@ export default class CameraC extends React.Component {
       // Http Request
       let {src, location} = await this.getMyLocation(photo)
       if (src){
-        navigate('Map', {image: photo })
+        navigate('Map', {src: location, image:src })
       }else{
         ToastAndroid.showWithGravityAndOffset(
           "invalid image!",
           ToastAndroid.LONG,
           ToastAndroid.BOTTOM,
           25,
-          50,
+          1000,
         );
       }
     }
@@ -88,33 +88,18 @@ export default class CameraC extends React.Component {
               style={{
                 flex: 1,
                 backgroundColor: 'transparent',
-                flexDirection: 'row'
+                flexDirection: 'row',
+                justifyContent:'center'
               }}
             >
 
               <TouchableOpacity
-                style={{
-                  flex: 0.3,
-                  alignSelf: 'flex-end',
-                  alignItems: 'center'
-                }}
+                style={styles.capture}
                 onPress={this.snap}
               >
-                <Text
-                  style={{ fontSize: 18, marginBottom: 10, marginLeft: 10, color: 'white' }}
-                >Capture</Text>
+                <View style={styles.inCap}></View>
               </TouchableOpacity>
 
-
-              <TouchableOpacity
-                style={{
-                  flex: 0.3,
-                  alignSelf: 'flex-end',
-                  alignItems: 'center'
-                }}
-                onPress={this.props.enableCamera}
-              >
-              </TouchableOpacity>
 
             </View>
           </Camera>
@@ -123,3 +108,40 @@ export default class CameraC extends React.Component {
     }
   }
 }
+
+export default CameraC ;
+
+const styles = StyleSheet.create({
+  cam: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    justifyContent:'center',
+
+  },
+
+  capture:{
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+    backgroundColor:'transparent',
+    width:70,
+    height:70,
+    borderWidth: 2,
+    borderColor: '#e3e7f1',
+    borderRadius: 40,
+    marginBottom: 15,
+    justifyContent:'center',
+    alignItems:'center'
+  },
+
+  inCap:{
+    backgroundColor:'#fff',
+    width:60,
+    height:60,
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 30,
+  }
+  
+
+});

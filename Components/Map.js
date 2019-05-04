@@ -1,15 +1,75 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Button, Image } from 'react-native';
+import { StyleSheet, Text, TextInput,View, TouchableOpacity, Button, Image } from 'react-native';
+
 const util = require('util');
 
 class MapScreen extends React.Component {
+
+    constructor(props){
+      super(props);
+      const {src, image} = this.props.navigation.state.params;
+
+      this.state={
+  
+        src : src,
+        dst: '',
+        image: image
+  
+      }
+      console.log(this.state.src)
+    }
+    
+
+
+
     static navigationOptions = {
-        title: "Map"
+        title: "Map",
+        headerLayoutPreset: 'center',
+        headerStyle: {
+          backgroundColor: '#5ca0d3',
+          
+          
+        },
+        headerTintColor: '#f3f9fb',
+        headerTitleStyle: {
+          fontWeight: 'bold',     
+        
+        },
     };
+
+
+
+
+    updatePath=()=>{
+      fetch(`http://192.168.1.8:5000/locate?src=${this.state.src}&&dst=${this.state.dst}`)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({
+            image:responseJson.src
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+        });
+    }
+
     render(){
         return(
-          <View>
-            <Text>Map</Text>
+          <View style={styles.container}> 
+            <Image
+            style={styles.map} 
+               source= {{ uri: this.state.image }}
+            />
+          <View style={styles.inputGroup}>
+            <Button title='Go To' style={styles.btn}
+            onPress={this.updatePath}
+            ></Button>
+          <TextInput
+          style={styles.TextInput}
+             placeholder="Hall Number"
+           onChangeText={(dst)=>{this.setState({dst})}}
+           />
+          </View>
             
           </View>
         );
@@ -17,3 +77,42 @@ class MapScreen extends React.Component {
 }
 
 export default MapScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f3f9fb",
+    alignItems: 'center',
+    // alignContent:'center',
+    justifyContent: 'space-around',
+    padding:10,
+
+  },
+  map:{
+    width:350,
+    height:500,
+    borderWidth: 3,
+    borderColor: '#5ca0d3',
+    borderRadius: 10,
+  },
+  inputGroup:{
+    flexDirection:'row',
+    height:45,
+  },
+  TextInput:{
+    height:45,
+    width:150,
+    backgroundColor:"#fff",
+    // borderRightWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 2,
+    paddingLeft:10
+
+  },
+  btn:{
+    height:45,
+    borderLeftWidth:1,
+    borderColor: '#5ca0d3',
+    borderRadius: 2,
+  }
+});
