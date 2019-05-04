@@ -1,15 +1,18 @@
 import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity , ToastAndroid, ActivityIndicator} from 'react-native';
 import { Camera, Permissions } from 'expo';
 import MapScreen from './Map';
 
 export default class CameraC extends React.Component {
+
   camera = null;
   state = {
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
-    ready:false
+    ready:false,
+    showSpinner: false
   };
+
   static navigationOptions = {
     title: "Scan"
 };
@@ -18,32 +21,69 @@ export default class CameraC extends React.Component {
     this.setState({ hasCameraPermission: status === 'granted' });
   }
 
+
+  getMyLocation(img){
+    const url = 'http://192.168.1.30:5000/mark'
+    const data = new FormData();
+    const imguri = img.uri
+    const imgName = imguri.split('/').pop()
+    const imgType = imgName.split('.').pop()
+    data.append('image', {
+      uri: imguri,
+      type: `image/${imgType}`,
+      name: imgName
+    });
+    options = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data'
+      },
+      body: data,
+    }
+    return fetch(url, options)
+      .then(res=>JSON.parse(res._bodyText))
+      .catch(console.log);
+  }
+
+  // capture the photo
   snap = async () => {
     let { photo } = this.state;
+    const { navigate } =  this.props.navigation;
     if (this.camera) {
       photo = await this.camera.takePictureAsync();
-      // Http Request
       this.setState({ready:true});
-      this.props.getImage(photo);
+      // Http Request
+      let {src, location} = await this.getMyLocation(photo)
+      if (src){
+        navigate('Map', {image: photo })
+      }else{
+        ToastAndroid.showWithGravityAndOffset(
+          "invalid image!",
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          25,
+          50,
+        );
+      }
     }
   }
 
 
   render() {
-    const { hasCameraPermission } = this.state;
+    const { hasCameraPermission, showSpinner } = this.state;
+    const msg = "invalid image!"
     if (hasCameraPermission === null) {
       return <View />;
     } else if (hasCameraPermission === false) {
       return <Text>No access to camera</Text>;}
-    // } else if(this.state.ready){
-    //    return(<MapScreen></MapScreen>
-    //     );    } 
     else {
       return (
 
         <View style={{ flex: 1 }
         }>
           <Camera style={{ flex: 1 }} type={this.state.type} ref={cam => { this.camera = cam; }}>
+             
             <View
               style={{
                 flex: 1,
@@ -74,9 +114,6 @@ export default class CameraC extends React.Component {
                 }}
                 onPress={this.props.enableCamera}
               >
-                <Text
-                  style={{ fontSize: 14, marginBottom: 10, marginLeft: 80, color: 'white' }}
-                >Back</Text>
               </TouchableOpacity>
 
             </View>
@@ -86,60 +123,3 @@ export default class CameraC extends React.Component {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-              {/* <TouchableOpacity
-                style={{
-                  flex: 0.1,
-                  alignSelf: 'flex-start',
-                  alignItems: 'center'
-                }}
-                onPress={() => {
-                  this.setState({
-                    type:
-                      this.state.type === Camera.Constants.Type.back
-                        ? Camera.Constants.Type.front
-                        : Camera.Constants.Type.back
-                  });
-                }}
-              >
-                <Text
-                  style={{ fontSize: 18, marginBottom: 10, color: 'white' }}
-                >
-                  {' '}
-                  Flip{' '}
-                </Text>
-              </TouchableOpacity> */}
