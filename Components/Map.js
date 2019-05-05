@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput,View, TouchableOpacity, Button, Image } from 'react-native';
-
+import { StyleSheet, Text, TextInput,View, TouchableOpacity, Button, Image, Dimensions } from 'react-native';
+import ImageZoom from 'react-native-image-pan-zoom';
 const util = require('util');
+
 
 class MapScreen extends React.Component {
 
@@ -41,7 +42,7 @@ class MapScreen extends React.Component {
 
 
     updatePath=()=>{
-      fetch(`http://192.168.1.8:5000/locate?src=${this.state.src}&&dst=${this.state.dst}`)
+      fetch(`${global.baseURL}/locate?src=${this.state.src}&&dst=${this.state.dst}`)
         .then((response) => response.json())
         .then((responseJson) => {
           this.setState({
@@ -56,10 +57,6 @@ class MapScreen extends React.Component {
     render(){
         return(
           <View style={styles.container}> 
-            <Image
-            style={styles.map} 
-               source= {{ uri: this.state.image }}
-            />
           <View style={styles.inputGroup}>
             <Button title='Go To' style={styles.btn}
             onPress={this.updatePath}
@@ -69,6 +66,17 @@ class MapScreen extends React.Component {
              placeholder="Hall Number"
            onChangeText={(dst)=>{this.setState({dst})}}
            />
+          </View>
+          <View>
+          <ImageZoom cropWidth={350}
+                       cropHeight={500}
+                       imageWidth={350}
+                       imageHeight={500}
+                       >
+                <Image 
+                      style={styles.map}
+                      source={{uri:this.state.image}}/>
+            </ImageZoom>
           </View>
             
           </View>
@@ -83,7 +91,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f3f9fb",
     alignItems: 'center',
-    // alignContent:'center',
+    alignContent:'center',
     justifyContent: 'space-around',
     padding:10,
 
@@ -114,5 +122,6 @@ const styles = StyleSheet.create({
     borderLeftWidth:1,
     borderColor: '#5ca0d3',
     borderRadius: 2,
+    marginBottom: 20
   }
 });

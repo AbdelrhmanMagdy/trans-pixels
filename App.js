@@ -4,7 +4,7 @@ import {StackNavigator} from 'react-navigation'
 import MapScreen from './Components/Map';
 import Home from './Components/Home';
 import CameraC from './Components/Camera';
-
+import './global'
 
 const Navigation = StackNavigator({
   Home :{screen:Home},

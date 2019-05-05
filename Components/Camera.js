@@ -2,7 +2,16 @@ import React from 'react';
 import { Text, View, TouchableOpacity , ToastAndroid, ActivityIndicator, StyleSheet} from 'react-native';
 import { Camera, Permissions } from 'expo';
 import MapScreen from './Map';
-
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator
+} from 'react-native-indicators';
 class CameraC extends React.Component {
 
   camera = null;
@@ -23,7 +32,7 @@ class CameraC extends React.Component {
 
 
   getMyLocation(img){
-    const url = 'http://192.168.1.8:5000/mark'
+    const url = `${global.baseURL}/mark`
     const data = new FormData();
     const imguri = img.uri
     const imgName = imguri.split('/').pop()
@@ -52,12 +61,14 @@ class CameraC extends React.Component {
     const { navigate } =  this.props.navigation;
     if (this.camera) {
       photo = await this.camera.takePictureAsync();
+      this.setState({showSpinner:true})
       this.setState({ready:true});
       // Http Request
       let {src, location} = await this.getMyLocation(photo)
       if (src){
         navigate('Map', {src: location, image:src })
       }else{
+        this.setState({showSpinner:false})
         ToastAndroid.showWithGravityAndOffset(
           "invalid image!",
           ToastAndroid.LONG,
@@ -77,11 +88,17 @@ class CameraC extends React.Component {
       return <View />;
     } else if (hasCameraPermission === false) {
       return <Text>No access to camera</Text>;}
+    // else if (showSpinner){
+    //   return (
+
+    //   )
+    // }
     else {
       return (
 
         <View style={{ flex: 1 }
         }>
+
           <Camera style={{ flex: 1 }} type={this.state.type} ref={cam => { this.camera = cam; }}>
              
             <View
@@ -92,13 +109,19 @@ class CameraC extends React.Component {
                 justifyContent:'center'
               }}
             >
-
-              <TouchableOpacity
+              {
+                showSpinner ?
+                <View style={[styles.container, styles.horizontal, styles.overlay]}>
+                  <BarIndicator color='#e3e7f1' />
+               </View>:
+                <TouchableOpacity
                 style={styles.capture}
                 onPress={this.snap}
               >
                 <View style={styles.inCap}></View>
               </TouchableOpacity>
+              }
+
 
 
             </View>
@@ -112,6 +135,15 @@ class CameraC extends React.Component {
 export default CameraC ;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10
+  },
   cam: {
     flex: 1,
     backgroundColor: 'transparent',
@@ -141,7 +173,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#fff',
     borderRadius: 30,
-  }
+  },
+  overlay: {
+    flex: 1,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    opacity: 0.5,
+    backgroundColor: 'black',
+    width: "100%",
+    height: "100%"
+  } 
   
 
 });
