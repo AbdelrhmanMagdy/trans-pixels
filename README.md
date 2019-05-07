@@ -1,4 +1,11 @@
 # trans-pixels
+## Names:
+### -Waleed Emad Eldeen Ezzat
+### -Abdelrahman Magdy Mohamed
+### -Yousif Mohamed Mahmoud
+### -Ahmed Abdelsamie
+### -Nader Yasser Sayed
+##
 
 ### Clone the repo with the submodules with the following commend:
 git clone --recurse-submodules https://github.com/AbdelrhmanMagdy/trans-pixels.git
