@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, TouchableOpacity , ToastAndroid, ActivityIndicator, StyleSheet} from 'react-native';
-import { Camera, Permissions } from 'expo';
+import { Camera, Permissions, ImageManipulator } from 'expo';
 import MapScreen from './Map';
 import {
   BallIndicator,
@@ -60,7 +60,7 @@ class CameraC extends React.Component {
     let { photo } = this.state;
     const { navigate } =  this.props.navigation;
     if (this.camera) {
-      photo = await this.camera.takePictureAsync();
+      photo = await this.camera.takePictureAsync({quality:0.3});
       this.setState({showSpinner:true})
       this.setState({ready:true});
       // Http Request

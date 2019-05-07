@@ -1,3 +1,6 @@
 [submodule "Backend"]
 	path = Backend
 	url = https://github.com/AbdelrhmanMagdy/transpixels-server.git
+[submodule "transpixels-server"]
+	path = transpixels-server
+	url = https://github.com/AbdelrhmanMagdy/transpixels-server
